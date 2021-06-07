@@ -16,19 +16,25 @@ const Todosinit = mongoose.model("Todosinit", todosboi);
 app.use(bodyParser.json());
 app.use(cors());
  
-//data schema and model
-const movieSchema = {
-    title: String,
-    genre: String,
-    year: String
-}
-
-const Movie = mongoose.model("Movie", movieSchema);
-
-//API routes
-app.get('/movies', function(req, res) {
-    Movie.find().then(movies => res.json(movies));
+ 
+const NewTaskSchema = {
+    name: 'string'
+ }
+ 
+ const Taskies = mongoose.model("Taskies", NewTaskSchema);
+  //API routes
+app.get('/ToDo', function(req, res) {
+    Taskies.find().then(movies => res.json(movies));
 })
+
+ app.post('/newTasks', function(req, res) {
+     const name = req.body.name;
+     const newTaskies = new Taskies({
+         name
+     });
+    newTaskies.save();
+ });
+
 
 app.listen(port, function() {
     console.log("express is running");
