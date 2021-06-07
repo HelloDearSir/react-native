@@ -1,100 +1,76 @@
-import { StatusBar } from 'expo-status-bar';
-import React, {useState} from 'react';
-import { KeyboardAvoidingView,StyleSheet, Text, TextInput, View,TouchableOpacity } from 'react-native';
-import Task from './components/Task';
-export default function App() {
-  const [task, setTask] = useState();
-  const [taskItems, setTaskItems] = useState([]);
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, TouchableHighlight, Alert, FlatList } from 'react-native';
 
-  const handleAddTask = () => {
-    setTaskItems([...taskItems, task])
-    setTask(null);
-  }
-  const completeTask = (index) => {
-    let itemsCopy = [...taskItems];
-    itemsCopy.splice(index, 1);
-    setTaskItems(itemsCopy)
-  }
+
+export default function App() {
+   const [data,setData] = useState([]);
+   
+useEffect(() =>{
+ fetch("http://192.168.0.101:5000/movies")  
+  .then(res=>res.json()).then(results=>{
+    setData(results)
+  })
+},[])
+
+  
+const renderList = ((item)=>{
+  return(
+   
+    <View style={styles.cardView}>
+      
+        <View style={{marginLeft:10}}>
+            <Text style={styles.text}>{item.genre}</Text>   
+             <Text style={styles.text}>{item.title}</Text>    
+             <Text style={styles.text}>{item.year}</Text>  
+        </View>
+   
+    </View>
+ 
+  )
+})
   return (
     <View style={styles.container}>
-     <View style={styles.taskWrapper}>
-        <Text style={styles.sectionTitle}> Today's Tasks</Text>
-         <View style={styles.items}>
-           {
-              taskItems.map((item, index) => {
-                return (
-                  <TouchableOpacity key={index}  onPress={() => completeTask(index)}>
-                    <Task text={item} /> 
-                  </TouchableOpacity>
-                )
-              })
-           } 
-    
-        </View>
-        </View>
-        <KeyboardAvoidingView 
-        behavior={Platform.OS === "android" ? "padding" : "height"}
-        style={styles.writeTaskWrapper}
-      >
-    <TextInput style={styles.input} placeholder={'write a task'} value={task} onChangeText={text => setTask (text)}/>
-
-    <TouchableOpacity onPress={()=> handleAddTask()}>
-     <View style={styles.addWrapper}>
-      <Text style={styles.addText}>+ </Text>
-      </View>
-     </TouchableOpacity>
-  </KeyboardAvoidingView>
-    </View>
-
- 
- 
+    <View style={styles.taskWrapper}>
+       <Text style={styles.sectionTitle}> Today's Tasks</Text>
+        <FlatList data={data} 
+        renderItem={({item}) => {
+          return renderList(item)
+        }}
+        keyExtractor={item=>item._id}
+         />
+      
+       </View>
+       </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#E8EAED',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  taskWrapper: {
-    paddingTop: 80,
-    paddingHorizontal: 20,
-
-  },
-  sectionTitle: {
-    fontSize: 24,
-     
-  },
-  items: {
-    marginTop: 30
-  } ,
-  writeTaskWrapper: {
-    position: 'absolute',
-    bottom: 60,
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center'
-  },
-  input: {
-    padding: 15,
-    paddingHorizontal: 15,
     backgroundColor: '#fff',
-    borderRadius: 60,
-    borderColor: '#C0C0C0',
-    borderWidth: 1,
-    width: 250,
-   },
-  addWrapper:{
-    width:60,
-    height:60,
-    backgroundColor: '#FFF',
-    borderRadius: 60,
-    justifyContent: 'center',
     alignItems: 'center',
+    justifyContent: 'center'
   },
-  addText:{},
+  header: {
+    marginBottom: 50,
+    fontSize: 20,
+    fontWeight: "bold",
+    fontFamily: "American Typewriter"
+  },
+  button: {
+    backgroundColor: '#E29F2D',
+    padding: 10, 
+    alignItems: "center",
+    borderRadius: 15,
+    marginBottom: 80
+  },
+  buttonText: {
+    fontFamily: "American Typewriter"
+  },
+  image: {
+    marginBottom: 10,
+    height: "50%",
+    width: "60%"
+  }
 
 });

@@ -8,6 +8,8 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "axios": "^0.21.1",
+    "axois": "^0.0.1-security",
     "expo": "~41.0.1",
     "expo-status-bar": "~1.0.4",
     "react": "16.13.1",
