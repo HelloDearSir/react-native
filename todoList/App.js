@@ -1,18 +1,17 @@
 import { StatusBar } from 'expo-status-bar';
 import React, {useState,useEffect} from 'react';
 import { KeyboardAvoidingView,StyleSheet, Text, TextInput, View,TouchableOpacity,FlatList,Alert } from 'react-native';
- 
+import uuid from 'uuid';
 export default function App() {
-  const [task, setTask] = useState();
+ 
   const [name,setName] = useState();
-  const [loading,setLoading] = useState(true);
-  const [taskItems, setTaskItems] = useState([]);
+   
   const [data,setData] = useState([]);
    const featchdata = () => {
     fetch("http://192.168.0.101:5000/ToDo")  
     .then(res=>res.json()).then(results=>{
       setData(results)
-      setLoading(false)
+     
     }).catch(err=>{
       Alert.alert("something went wrong")
     })
@@ -20,72 +19,64 @@ export default function App() {
   useEffect(() =>{
     featchdata();
    },[])
-
-  const handleAddTask = () => {
-    fetch("http://192.168.0.101:5000/newTasks",{
-              method:"post",
-              headers:{
-                'Content-Type': 'application/json'
-              },
-              body:JSON.stringify({
-                 name,
-              })
-          })
+   const handleAddTask = () => {
+    const id = uuid();
+    setData([{ _id: id, name }, ...data]);
+    fetch("http://192.168.0.101:5000/newTasks", {
+      method: "post",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        name,
+      })
+    })
+    .then(featchdata)
+    .catch(() => {
+      setData(data => data.filter(it => it._id !== id))
+      Alert.alert('Failed to save task')
+    })
   }
-  // const completeTask = () => {
-  //   let itemsCopy = [...taskItems];
-  //   itemsCopy.splice(item, 1);
-  //   setTaskItems(itemsCopy)
-  // }
-   
+  const renderList = ((item) => {
+    return (
 
-const renderList = ((item)=>{
-  return(
-   
-    <View style={styles.cardView}>
-      
-        <View style={{marginLeft:10}}>
-        {/* <TouchableOpacity  onPress={() => completeTask()}> */}
-            <Text style={styles.text}>{item.name}</Text>   
-            {/* </TouchableOpacity> */}
+      <View style={styles.cardView}>
+
+        <View style={{ marginLeft: 10 }}>
+          {/* <TouchableOpacity  onPress={() => completeTask()}> */}
+          <Text style={styles.text}>{item.name}</Text>
+          {/* </TouchableOpacity> */}
         </View>
-       </View>
- )
-})
-  
+      </View>
+    )
+  })
+  console.log(data);
   return (
     <View style={styles.container}>
-     <View style={styles.taskWrapper}>
+      <View style={styles.taskWrapper}>
         <Text style={styles.sectionTitle}> Today's Tasks</Text>
-         <View style={styles.items}>
-         <FlatList data={data} 
-        renderItem={({item}) => {
-          return renderList(item)
-        }}
-        keyExtractor={item=>item._id}
-        onRefresh={()=>featchdata()}
-        refreshing={loading}  
-/>
-      
-        
-
+        <View style={styles.items}>
+          <FlatList data={data}
+            renderItem={({ item }) => {
+              return renderList(item)
+            }}
+            keyExtractor={item => item._id}
+          />
         </View>
-        </View>
-        <KeyboardAvoidingView 
+      </View>
+      <KeyboardAvoidingView
         behavior={Platform.OS === "android" ? "padding" : "height"}
         style={styles.writeTaskWrapper}
       >
-    <TextInput style={styles.input} placeholder={'write a task'} value={name} onChangeText={text => setName (text)}/>
+        <TextInput style={styles.input} placeholder={'write a task'} value={name} onChangeText={text => setName(text)} />
 
-    <TouchableOpacity onPress={()=> handleAddTask()}>
-     <View style={styles.addWrapper}>
-      <Text style={styles.addText}>+ </Text>
-      </View>
-     </TouchableOpacity>
-  </KeyboardAvoidingView>
+        <TouchableOpacity onPress={() => handleAddTask()}>
+          <View style={styles.addWrapper}>
+            <Text style={styles.addText}>+ </Text>
+          </View>
+        </TouchableOpacity>
+      </KeyboardAvoidingView>
     </View>
-
-
 
   );
 }
