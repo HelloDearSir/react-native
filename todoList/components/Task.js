@@ -39,7 +39,7 @@ const Task = (props) => {
   },
   itemText:{
       maxWidth:'80%',
-     
+
     },
   circular:{
     width: 12,

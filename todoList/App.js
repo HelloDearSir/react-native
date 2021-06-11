@@ -20,8 +20,6 @@ export default function App() {
     featchdata();
    },[])
    const handleAddTask = () => {
-    const id = uuid();
-    setData([{ _id: id, name }, ...data]);
     fetch("http://192.168.0.101:5000/newTasks", {
       method: "post",
       headers: {
@@ -31,17 +29,14 @@ export default function App() {
         name,
       })
     })
-    .then(featchdata)
-    .catch(() => {
-      setData(data => data.filter(it => it._id !== id))
-      Alert.alert('Failed to save task')
-    })
+    .then(response => {
+      fetchData()
+    })  
   }
   const renderList = ((item) => {
     return (
 
       <View style={styles.cardView}>
-
         <View style={{ marginLeft: 10 }}>
           {/* <TouchableOpacity  onPress={() => completeTask()}> */}
           <Text style={styles.text}>{item.name}</Text>
@@ -66,10 +61,8 @@ export default function App() {
       </View>
       <KeyboardAvoidingView
         behavior={Platform.OS === "android" ? "padding" : "height"}
-        style={styles.writeTaskWrapper}
-      >
-        <TextInput style={styles.input} placeholder={'write a task'} value={name} onChangeText={text => setName(text)} />
-
+        style={styles.writeTaskWrapper}>
+        <TextInput style={styles.input} placeholder={'write a task'} value={name} onChangeText={text => setName(text)} />      
         <TouchableOpacity onPress={() => handleAddTask()}>
           <View style={styles.addWrapper}>
             <Text style={styles.addText}>+ </Text>
@@ -77,7 +70,6 @@ export default function App() {
         </TouchableOpacity>
       </KeyboardAvoidingView>
     </View>
-
   );
 }
 
@@ -91,11 +83,9 @@ const styles = StyleSheet.create({
   taskWrapper: {
     paddingTop: 80,
     paddingHorizontal: 20,
-
   },
   sectionTitle: {
     fontSize: 24,
-
   },
   items: {
     marginTop: 30
