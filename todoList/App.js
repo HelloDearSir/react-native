@@ -1,75 +1,68 @@
 import { StatusBar } from 'expo-status-bar';
-import React, {useState,useEffect} from 'react';
-import { KeyboardAvoidingView,StyleSheet, Text, TextInput, View,TouchableOpacity,FlatList,Alert } from 'react-native';
-import uuid from 'uuid';
+import React, {useState} from 'react';
+import { KeyboardAvoidingView,StyleSheet, Text, TextInput, View,TouchableOpacity,Button } from 'react-native';
+import Task from './components/Task';
+import * as Notifcation from 'expo-notifications';
 export default function App() {
- 
-  const [name,setName] = useState();
-   
-  const [data,setData] = useState([]);
-   const featchdata = () => {
-    fetch("http://192.168.0.101:5000/ToDo")  
-    .then(res=>res.json()).then(results=>{
-      setData(results)
-     
-    }).catch(err=>{
-      Alert.alert("something went wrong")
-    })
-   } 
-  useEffect(() =>{
-    featchdata();
-   },[])
-   const handleAddTask = () => {
-    fetch("http://192.168.0.101:5000/newTasks", {
-      method: "post",
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        name,
-      })
-    })
-    .then(response => {
-      fetchData()
-    })  
-  }
-  const renderList = ((item) => {
-    return (
+  const [task, setTask] = useState();
+  const [taskItems, setTaskItems] = useState([]);
 
-      <View style={styles.cardView}>
-        <View style={{ marginLeft: 10 }}>
-          {/* <TouchableOpacity  onPress={() => completeTask()}> */}
-          <Text style={styles.text}>{item.name}</Text>
-          {/* </TouchableOpacity> */}
-        </View>
-      </View>
-    )
-  })
-  console.log(data);
+  const handleAddTask = () => {
+    setTaskItems([...taskItems, task])
+    setTask(null);
+  }
+  const completeTask = (index) => {
+    let itemsCopy = [...taskItems];
+    itemsCopy.splice(index, 1);
+    setTaskItems(itemsCopy)
+  }
+
+  const handleNotifcation = () => {
+    Notifcation.scheduleNotificationAsync({
+      content: {
+        title: "testing into notifications",
+        body: "this is my local shit"
+        },
+        trigger:{
+          seconds: 1,
+        }
+      })
+  };
+
   return (
     <View style={styles.container}>
-      <View style={styles.taskWrapper}>
+      <Button title={"open Notifcation"}onPress={handleNotifcation} /> 
+     <View style={styles.taskWrapper}>
         <Text style={styles.sectionTitle}> Today's Tasks</Text>
-        <View style={styles.items}>
-          <FlatList data={data}
-            renderItem={({ item }) => {
-              return renderList(item)
-            }}
-            keyExtractor={item => item._id}
-          />
+         <View style={styles.items}>
+           {
+              taskItems.map((item, index) => {
+                return (
+                  <TouchableOpacity key={index}  onPress={() => completeTask(index)}>
+                    <Task text={item} /> 
+                  </TouchableOpacity>
+                )
+              })
+           } 
+
         </View>
-      </View>
-      <KeyboardAvoidingView
+        </View>
+        <KeyboardAvoidingView 
         behavior={Platform.OS === "android" ? "padding" : "height"}
-        style={styles.writeTaskWrapper}>
-        <TextInput style={styles.input} placeholder={'write a task'} value={name} onChangeText={text => setName(text)} />      
-        <TouchableOpacity onPress={() => handleAddTask()}>
-          <View style={styles.addWrapper}>
-            <Text style={styles.addText}>+ </Text>
-          </View>
-        </TouchableOpacity>
-      </KeyboardAvoidingView>
+        style={styles.writeTaskWrapper}
+      >
+    <TextInput style={styles.input} placeholder={'write a task'} value={task} onChangeText={text => setTask (text)}/>
+
+    <TouchableOpacity onPress={()=> handleAddTask()}>
+     <View style={styles.addWrapper}>
+      <Text style={styles.addText}>+ </Text>
+      </View>
+     </TouchableOpacity>
+  </KeyboardAvoidingView>
     </View>
+
+
+
   );
 }
 
@@ -83,9 +76,11 @@ const styles = StyleSheet.create({
   taskWrapper: {
     paddingTop: 80,
     paddingHorizontal: 20,
+
   },
   sectionTitle: {
     fontSize: 24,
+
   },
   items: {
     marginTop: 30
