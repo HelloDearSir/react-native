@@ -8,7 +8,18 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#ffffff",
+      "plugins": [
+        [
+          "expo-notifications",
+          {
+            "icon": "./local/path/to/myNotificationIcon.png",
+            "color": "#ffffff",
+            "sounds": ["./local/path/to/mySound.wav", "./local/path/to/myOtherSound.wav"],
+            "mode": "production"
+          }
+        ]
+      ]
     },
     "updates": {
       "fallbackToCacheTimeout": 0
