@@ -5,6 +5,7 @@ import 'react-native-gesture-handler';
 import {NavigationContainer} from '@react-navigation/native'; 
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Test from './test';
+import {FontAwesome5} from '@expo/vector-icons';
 
 const Tab = createBottomTabNavigator();
 
@@ -16,7 +17,11 @@ const Tab = createBottomTabNavigator();
 
  function SettingScreen() {
   return(
-    <Test/>
+    <View> 
+      <Text> 
+        Hello"
+      </Text>
+    </View>
   )
 }
 export default function App() { 
@@ -24,7 +29,7 @@ export default function App() {
    return (
      <NavigationContainer>
        <Tab.Navigator tabBarOptions={{
-        
+        showLabel: false,
          style: {
            backgroundColor:'#fff',
            position:'absolute',
@@ -42,7 +47,20 @@ export default function App() {
 
          }
        }}>
-       <Tab.Screen name={"Home"} component={HomeScreen}>
+       <Tab.Screen name={"Home"} component={HomeScreen} options={{
+         tabBarIcon:({focused}) => (
+           <View style={{
+             position:'absolute',
+             top:'20%',
+           }}>
+            <FontAwesome5
+            name="home" size={20}
+            color={focused ? 'red' : 'gray'}
+            >
+            </FontAwesome5>
+           </View>
+          )
+       }}>
            </Tab.Screen>
 
        <Tab.Screen name={"Setting"} component={SettingScreen}></Tab.Screen>
