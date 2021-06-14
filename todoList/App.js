@@ -15,14 +15,12 @@ const Tab = createBottomTabNavigator();
    )
  }
 
- function SettingScreen() {
-  return(
-    <View> 
-      <Text> 
-        Hello"
-      </Text>
+ function SettingsScreen() {
+  return (
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Text>Settings!</Text>
     </View>
-  )
+  );
 }
 export default function App() { 
 
@@ -32,7 +30,8 @@ export default function App() {
         showLabel: false,
          style: {
            backgroundColor:'#fff',
-           position:'absolute',
+           position: 'relative' 
+           ,
            bottom:40,
            marginHorizontal: 20,
           height:60,
@@ -54,8 +53,8 @@ export default function App() {
              top:'20%',
            }}>
             <FontAwesome5
-            name="home" size={20}
-            color={focused ? 'red' : 'gray'}
+            name="book" size={20}
+            color={focused ? 'black' : 'gray'}
             >
             </FontAwesome5>
            </View>
@@ -63,7 +62,19 @@ export default function App() {
        }}>
            </Tab.Screen>
 
-       <Tab.Screen name={"Setting"} component={SettingScreen}></Tab.Screen>
+       <Tab.Screen name={"Setting"} component={SettingsScreen} options={{
+         tabBarIcon:({focused}) => (
+           <View style= {{
+             position:'absolute',
+             top:'20%'
+           }}>
+             <FontAwesome5 name="font" size={20}
+             color={focused ? 'black' : 'gray'}>
+
+             </FontAwesome5>
+           </View>
+         )
+       }} ></Tab.Screen>
        </Tab.Navigator>
       
      </NavigationContainer>
