@@ -13,7 +13,7 @@ Notifcation.setNotificationHandler({
   }
 })
 
-const Test= () => {
+const todolist = () => {
   const [task, setTask] = useState();
   const [taskItems, setTaskItems] = useState([]);
 
@@ -124,4 +124,4 @@ const styles = StyleSheet.create({
 
 });
 
-export default Test;
+export default todolist;
