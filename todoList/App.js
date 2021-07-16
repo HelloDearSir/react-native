@@ -4,14 +4,14 @@ import { KeyboardAvoidingView,StyleSheet, Text, TextInput, View,TouchableOpacity
 import 'react-native-gesture-handler';
 import {NavigationContainer} from '@react-navigation/native'; 
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import Test from './test';
+import ToDoList from './todolist';
 import {FontAwesome5} from '@expo/vector-icons';
 
 const Tab = createBottomTabNavigator();
 
  function HomeScreen() {
    return(
-     <Test/>
+     <ToDoList/>
    )
  }
 
