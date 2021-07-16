@@ -1,0 +1,3 @@
+This application is a todo react-native app 
+
+ The live version is using local storage but I am planning to try and get node.js and mongodb to work with the application 
